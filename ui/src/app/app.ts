@@ -724,10 +724,10 @@ export class App implements AfterViewInit, OnInit, OnDestroy {
 
   themeChanged(theme: Theme) {
     this.cookieService.set('metube_theme', theme.id, { expires: this.settingsCookieExpiryDays });
-    this.setTheme(theme);
+    this.setTheme();
   }
 
-  setTheme(theme: Theme) {
+  setTheme() {
     this.activeTheme = this.themes.find(t => t.id === 'light');
     document.documentElement.setAttribute('data-bs-theme', 'light');
   }
