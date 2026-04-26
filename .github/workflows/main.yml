@@ -220,3 +220,25 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  vps-deploy:
+    needs: quality-checks
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - name: Executing remote ssh commands using ssh key
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd ~/metube
+            git pull origin master
+            cd ui
+            corepack enable
+            pnpm install --frozen-lockfile
+            pnpm run build
+            cd ..
+            pm2 startOrRestart ecosystem.config.js
+            pm2 save
