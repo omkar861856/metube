@@ -1,21 +1,645 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-bs-theme="light">
 <head>
   <meta charset="utf-8">
-  <title>MeTube</title>
+  <title>MeTube - Video, Audio, Playlist and Channel Downloader</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="MeTube is a browser-based media downloader UI for downloading videos, audio, captions, thumbnails, playlists, channels, and subscription updates from YouTube and many yt-dlp supported websites.">
+  <meta name="keywords" content="MeTube, yt-dlp, video downloader, audio downloader, YouTube downloader, playlist downloader, channel downloader, captions, thumbnails, cookies.txt, supported sites">
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="MeTube">
+  <link rel="canonical" href="/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="MeTube - Video, Audio, Playlist and Channel Downloader">
+  <meta property="og:description" content="Download videos, audio, captions, thumbnails, playlists, channels, and queued subscription updates from a clean browser interface powered by yt-dlp.">
+  <meta property="og:site_name" content="MeTube">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="MeTube - Video, Audio, Playlist and Channel Downloader">
+  <meta name="twitter:description" content="A practical web UI for yt-dlp downloads, playlists, channels, captions, thumbnails, and cookie-based platform access.">
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1069390686666343" crossorigin="anonymous"></script>
+
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png">
-  <link rel="mask-icon" href="assets/icons/safari-pinned-tab.svg" color="#5bbad5">
+  <link rel="mask-icon" href="assets/icons/safari-pinned-tab.svg" color="#dc2626">
   <meta name="msapplication-config" content="assets/icons/browserconfig.xml">
   <link rel="shortcut icon" href="favicon.ico">
-  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="msapplication-TileColor" content="#dc2626">
   <link rel="manifest" href="manifest.webmanifest" crossorigin="use-credentials">
-  <meta name="theme-color" content="#212529">
+  <meta name="theme-color" content="#ffffff">
+
+  <style>
+    :root {
+      color-scheme: light;
+      --page-bg: #f4f7fb;
+      --surface: #ffffff;
+      --surface-soft: #f8fafc;
+      --text: #111827;
+      --muted: #475569;
+      --subtle: #64748b;
+      --border: #d8e0eb;
+      --accent: #dc2626;
+      --accent-dark: #b91c1c;
+      --blue: #1d4ed8;
+      --green: #047857;
+      --shadow: 0 20px 50px rgba(15, 23, 42, .08);
+      --radius: 8px;
+      --content: min(1180px, calc(100% - 32px));
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      background: var(--page-bg);
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      color: var(--text);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, .96) 0, rgba(244, 247, 251, .98) 440px),
+        var(--page-bg);
+      font-family: inherit;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid rgba(216, 224, 235, .9);
+      background: rgba(255, 255, 255, .92);
+      backdrop-filter: blur(14px);
+    }
+
+    .site-nav {
+      width: var(--content);
+      margin: 0 auto;
+      min-height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text);
+      font-weight: 800;
+      font-size: 1.18rem;
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: var(--radius);
+      color: #fff;
+      background: linear-gradient(135deg, var(--accent), #ef4444);
+      box-shadow: 0 10px 24px rgba(220, 38, 38, .24);
+      font-weight: 900;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      color: var(--muted);
+      font-size: .94rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .nav-links a {
+      color: #334155;
+    }
+
+    .hero {
+      width: var(--content);
+      margin: 0 auto;
+      padding: 42px 0 20px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(300px, 430px);
+      gap: 28px;
+      align-items: stretch;
+    }
+
+    .hero-copy {
+      align-self: center;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--accent-dark);
+      font-weight: 800;
+      text-transform: uppercase;
+      font-size: .8rem;
+      letter-spacing: .08em;
+    }
+
+    h1 {
+      margin: 0 0 16px;
+      max-width: 780px;
+      color: var(--text);
+      font-size: clamp(2.25rem, 5vw, 4rem);
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+    }
+
+    .hero-copy p {
+      margin: 0;
+      max-width: 720px;
+      color: var(--muted);
+      font-size: clamp(1rem, 2vw, 1.16rem);
+    }
+
+    .quick-tags {
+      margin-top: 22px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .quick-tags span {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 12px;
+      background: #fff;
+      color: #273449;
+      font-size: .86rem;
+      font-weight: 750;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, .04);
+    }
+
+    .instruction-panel,
+    .info-card,
+    .app-shell {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .instruction-panel {
+      padding: 24px;
+    }
+
+    .instruction-panel h2 {
+      margin: 0 0 16px;
+      color: var(--text);
+      font-size: 1.25rem;
+      letter-spacing: 0;
+    }
+
+    .steps {
+      margin: 0;
+      padding-left: 0;
+      list-style: none;
+      color: var(--muted);
+    }
+
+    .steps li {
+      margin: 0 0 14px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .steps strong {
+      color: var(--text);
+    }
+
+    .cookie-note {
+      margin-top: 18px;
+      border: 1px solid #bfdbfe;
+      border-radius: var(--radius);
+      background: #eff6ff;
+      padding: 16px;
+      color: #1e3a8a;
+      font-size: .94rem;
+    }
+
+    .cookie-note strong {
+      color: #172554;
+    }
+
+    .ad-row,
+    .ad-sidebar {
+      width: var(--content);
+      margin: 24px auto;
+    }
+
+    .ad-frame {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: 96px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: #fff;
+      color: var(--subtle);
+      text-align: center;
+    }
+
+    .ad-sidebar {
+      margin: 0;
+      width: 100%;
+    }
+
+    .ad-sidebar .ad-frame {
+      min-height: 92px;
+      box-shadow: none;
+    }
+
+    .app-area {
+      width: var(--content);
+      margin: 24px auto 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 336px;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .app-shell {
+      overflow: hidden;
+      min-width: 0;
+      background: #fff;
+    }
+
+    .app-shell-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface-soft);
+      padding: 12px 16px;
+      color: #334155;
+      font-size: .92rem;
+      font-weight: 800;
+    }
+
+    app-root {
+      display: block;
+      min-height: 330px;
+      background: #fff;
+    }
+
+    .sidebar-stack {
+      display: grid;
+      gap: 20px;
+      min-width: 0;
+    }
+
+    .info-card {
+      padding: 20px;
+      box-shadow: 0 14px 34px rgba(15, 23, 42, .06);
+    }
+
+    .info-card h2,
+    .info-card h3 {
+      margin: 0 0 10px;
+      color: var(--text);
+      font-size: 1.1rem;
+      letter-spacing: 0;
+    }
+
+    .info-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: .95rem;
+    }
+
+    .info-card ul {
+      margin: 12px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+      font-size: .95rem;
+    }
+
+    .info-card li {
+      margin-bottom: 7px;
+    }
+
+    .content-grid {
+      width: var(--content);
+      margin: 32px auto 64px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .content-grid .info-card:first-child {
+      grid-column: span 2;
+    }
+
+    .site-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .site-list span {
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #334155;
+      padding: 7px 12px;
+      font-size: .84rem;
+      font-weight: 750;
+    }
+
+    .site-footer {
+      border-top: 1px solid var(--border);
+      background: #fff;
+      color: var(--subtle);
+      text-align: center;
+      padding: 24px 16px;
+      font-size: .92rem;
+    }
+
+    @media (max-width: 1024px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+      .instruction-panel {
+        max-width: 100%;
+      }
+    }
+
+    @media (max-width: 980px) {
+      .app-area,
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .content-grid .info-card:first-child {
+        grid-column: auto;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .site-nav {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 14px 0;
+      }
+
+      .nav-links {
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 2px;
+      }
+
+      .hero {
+        padding-top: 28px;
+      }
+    }
+  </style>
+
+  <script>
+    // Force light theme
+    (function() {
+      localStorage.setItem('metube_theme', 'light');
+      document.documentElement.setAttribute('data-bs-theme', 'light');
+      
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (mutation.type === 'attributes' && mutation.attributeName === 'data-bs-theme') {
+            const theme = document.documentElement.getAttribute('data-bs-theme');
+            if (theme !== 'light') {
+              document.documentElement.setAttribute('data-bs-theme', 'light');
+            }
+          }
+        });
+      });
+      observer.observe(document.documentElement, { attributes: true });
+    })();
+
+    // Hide empty ad containers
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.querySelectorAll('.ad-frame').forEach(frame => {
+          if (!frame.querySelector('ins, iframe, img, script[src], .adsbygoogle')) {
+            const container = frame.closest('.ad-row') || frame.closest('.ad-sidebar');
+            if (container) container.style.display = 'none';
+          }
+        });
+      }, 2000);
+    });
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "MeTube",
+    "applicationCategory": "MultimediaApplication",
+    "operatingSystem": "Web Browser",
+    "description": "MeTube is a browser-based media downloader powered by yt-dlp. Download videos, audio, captions, thumbnails, playlists, and channels.",
+    "featureList": [
+      "Download videos and audio from supported URLs",
+      "Download captions and thumbnails",
+      "Download playlists and channels",
+      "Subscribe to channels and playlists",
+      "Use cookies.txt for platforms that require logged-in access"
+    ]
+  }
+  </script>
+  <script src="https://pl29266035.profitablecpmratenetwork.com/62/d0/90/62d0901e6647f19ab538f926870e7b09.js"></script>
 </head>
 <body>
-  <app-root></app-root>
+  <header class="site-header">
+    <nav class="site-nav" aria-label="Primary navigation">
+      <a class="brand" href="/" aria-label="MeTube home">
+        <span class="brand-mark" aria-hidden="true">M</span>
+        <span>MeTube</span>
+      </a>
+      <div class="nav-links">
+        <a href="#download">Downloader</a>
+        <a href="#how-to-download">How to download</a>
+        <a href="#cookies">Cookies</a>
+        <a href="#supported-sites">Supported sites</a>
+        <a href="https://www.profitablecpmratenetwork.com/z6pa0qj70?key=a637afdc86b00f788881a098cec1e0d0" target="_blank" rel="nofollow noopener">Sponsored</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="page-title">
+      <div class="hero-copy">
+        <p class="eyebrow">Professional yt-dlp media downloader</p>
+        <h1 id="page-title">Download videos, audio, captions, thumbnails, playlists, and channels.</h1>
+        <p>
+          MeTube is a clean browser-based media downloader powered by yt-dlp.
+          Easily save content from hundreds of websites, including full playlists and channels,
+          with advanced options for captions, thumbnails, and authenticated platform access.
+        </p>
+        <div class="quick-tags" aria-label="MeTube capabilities">
+          <span>Video</span>
+          <span>Audio</span>
+          <span>Captions</span>
+          <span>Thumbnails</span>
+          <span>Playlists</span>
+          <span>Channels</span>
+          <span>Subscriptions</span>
+        </div>
+      </div>
+
+      <aside id="how-to-download" class="instruction-panel" aria-labelledby="download-steps-title">
+        <h2 id="download-steps-title">How to download</h2>
+        <ul class="steps">
+          <li><span>📋</span> <div><strong>Copy the video, playlist, or channel URL</strong> from your source platform.</div></li>
+          <li><span>📥</span> <div><strong>Paste the URL into MeTube</strong> and choose your desired format or quality.</div></li>
+          <li><span>⚙️</span> <div><strong>Choose output options</strong> for captions, thumbnails, or specific codecs.</div></li>
+          <li><span>🛠️</span> <div><strong>Use Advanced settings</strong> to upload a cookies.txt file for private or logged-in content.</div></li>
+          <li><span>🚀</span> <div><strong>Queue the download</strong> and watch the progress in the downloader workspace.</div></li>
+        </ul>
+        <p id="cookies" class="cookie-note">
+          <strong>Need to download private content?</strong> Install the
+          <a href="https://chromewebstore.google.com/detail/get-cookiestxt-locally/cclelndahbckbenkjhflpdbgdldlbecc" target="_blank" rel="noopener">Get cookies.txt LOCALLY</a>
+          browser extension, export your cookies as a .txt file, and upload it in the Advanced settings.
+        </p>
+      </aside>
+    </section>
+
+    <div class="ad-row" aria-label="Advertisement">
+      <div class="ad-frame">
+        <script async="async" data-cfasync="false" src="https://pl29266258.profitablecpmratenetwork.com/2a0f3a7fa0ed6513ffcc865a5fa54f78/invoke.js"></script>
+        <div id="container-2a0f3a7fa0ed6513ffcc865a5fa54f78"></div>
+      </div>
+    </div>
+
+    <section id="download" class="app-area" aria-label="MeTube downloader">
+      <div class="app-shell">
+        <div class="app-shell-header">
+          <span>Downloader App</span>
+          <span>Light Theme Interface</span>
+        </div>
+        <app-root></app-root>
+      </div>
+
+      <aside class="sidebar-stack" aria-label="Resources and tips">
+        <div class="ad-sidebar" aria-label="Advertisement">
+          <div class="ad-frame">
+            <script>
+              atOptions = {
+                'key' : 'd21c9c061c46c26603fa6f8c84ab169f',
+                'format' : 'iframe',
+                'height' : 50,
+                'width' : 320,
+                'params' : {}
+              };
+            </script>
+            <script src="https://www.highperformanceformat.com/d21c9c061c46c26603fa6f8c84ab169f/invoke.js"></script>
+          </div>
+        </div>
+
+        <article class="info-card">
+          <h2>Best results</h2>
+          <p>Practical tips for the best download experience:</p>
+          <ul>
+            <li>Use direct media URLs for faster extraction.</li>
+            <li>Select audio-only for music or podcasts.</li>
+            <li>Enable captions for archival quality.</li>
+            <li>Use cookies.txt for membership or age-gated content.</li>
+          </ul>
+        </article>
+
+        <article class="info-card">
+          <h3>Subscriptions</h3>
+          <p>
+            Monitor channels and playlists. MeTube periodically checks for new items
+            and adds them to your download queue automatically.
+          </p>
+        </article>
+      </aside>
+    </section>
+
+    <section class="content-grid" aria-label="Additional information">
+      <article class="info-card">
+        <h2>Supported platforms</h2>
+        <p>
+          MeTube leverages yt-dlp to support hundreds of websites. If a site works with
+          yt-dlp, it works with MeTube.
+        </p>
+        <div id="supported-sites" class="site-list" aria-label="Popular supported sites">
+          <span>YouTube</span>
+          <span>Vimeo</span>
+          <span>SoundCloud</span>
+          <span>Twitch</span>
+          <span>TikTok</span>
+          <span>Instagram</span>
+          <span>Facebook</span>
+          <span>Twitter / X</span>
+          <span>Dailymotion</span>
+          <span>Bandcamp</span>
+          <span>Reddit</span>
+          <span>Archive.org</span>
+          <span>BBC</span>
+          <span>TED</span>
+          <span>PeerTube</span>
+          <span>Rumble</span>
+          <span>Kick</span>
+          <span>LinkedIn Learning</span>
+          <span>Udemy</span>
+          <span>Pluralsight</span>
+          <span>Google Drive</span>
+          <span>Dropbox</span>
+          <span>Generic extractor</span>
+        </div>
+      </article>
+
+      <article class="info-card">
+        <h2>Cookies.txt workflow</h2>
+        <p>
+          Access protected content by uploading a cookies.txt file. This allows MeTube
+          to use your active browser session for logged-in or private media platforms.
+        </p>
+      </article>
+
+      <article class="info-card">
+        <h2>Utility first</h2>
+        <p>
+          Designed for performance and clarity. No dark mode, no distractions.
+          Just a powerful tool for your media archival needs.
+        </p>
+      </article>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    MeTube &copy; 2026 - Powered by yt-dlp. Download videos, audio, and more from your favorite sites.
+  </footer>
+
   <noscript>Please enable JavaScript to continue using this application.</noscript>
+  <script src="https://pl29266037.profitablecpmratenetwork.com/c0/d7/9d/c0d79d17ed821bba579839812b8c2d34.js"></script>
 </body>
 </html>

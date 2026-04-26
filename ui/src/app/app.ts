@@ -268,7 +268,7 @@ export class App implements AfterViewInit, OnInit, OnDestroy {
     if (!Number.isNaN(ci) && ci >= 1) {
       this.checkIntervalMinutes = ci;
     }
-    this.activeTheme = this.getPreferredTheme(this.cookieService);
+    this.activeTheme = this.themes.find(x => x.id === 'light');
 
     // Subscribe to download updates
     this.downloads.queueChanged.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
@@ -728,12 +728,8 @@ export class App implements AfterViewInit, OnInit, OnDestroy {
   }
 
   setTheme(theme: Theme) {
-    this.activeTheme = theme;
-    if (theme.id === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      document.documentElement.setAttribute('data-bs-theme', 'dark');
-    } else {
-      document.documentElement.setAttribute('data-bs-theme', theme.id);
-    }
+    this.activeTheme = this.themes.find(t => t.id === 'light');
+    document.documentElement.setAttribute('data-bs-theme', 'light');
   }
 
   formatChanged() {

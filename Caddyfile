@@ -1,0 +1,3 @@
+metube.ecotron.co.in {
+    reverse_proxy metube:8081
+}

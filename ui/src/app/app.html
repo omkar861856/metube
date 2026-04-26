@@ -1,10 +1,10 @@
-<nav class="navbar navbar-expand-md navbar-dark">
+<nav class="navbar navbar-expand-md bg-white border-bottom shadow-sm mb-4">
   <div class="container-fluid">
     <a class="navbar-brand d-flex align-items-center" href="#">
-      <img src="assets/icons/android-chrome-192x192.png" alt="MeTube Logo" height="32" class="me-2">
-      MeTube
+      <div class="brand-mark-mini me-2">M</div>
+      <span class="fw-bold">MeTube</span>
     </a>
-    <div class="download-metrics">
+    <div class="download-metrics ms-3">
       @if (activeDownloads > 0) {
         <div class="metric">
           <fa-icon [icon]="faDownload" class="text-primary" />
@@ -36,49 +36,8 @@
         </div>
       }
     </div>
-    <!--
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsDefault" aria-controls="navbarsDefault" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarsDefault">
-      <ul class="navbar-nav mr-auto">
-        <li class="nav-item active">
-          <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-        </li>
-      </ul>
-    </div>
-    -->
-    <div class="navbar-nav ms-auto">
-      <div class="nav-item dropdown" ngbDropdown placement="bottom-end">
-        <button class="btn btn-link nav-link py-2 px-0 px-sm-2 dropdown-toggle d-flex align-items-center"
-          id="theme-select"
-          type="button"
-          aria-expanded="false"
-          ngbDropdownToggle>
-          @if(activeTheme){
-          <fa-icon [icon]="activeTheme.icon" />
-          }
-        </button>
-        <ul class="dropdown-menu dropdown-menu-end position-absolute" aria-labelledby="theme-select" ngbDropdownMenu>
-          @for (theme of themes; track theme) {
-            <li>
-              <button type="button" class="dropdown-item d-flex align-items-center"
-              [class.active]="activeTheme === theme"
-              ngbDropdownItem
-              (click)="themeChanged(theme)">
-                <span class="me-2 opacity-50">
-                  <fa-icon [icon]="theme.icon" />
-                </span>
-                {{ theme.displayName }}
-                <span class="ms-auto"
-                [class.d-none]="activeTheme !== theme">
-                <fa-icon [icon]="faCheck" />
-                </span>
-              </button>
-            </li>
-          }
-        </ul>
-      </div>
+    <div class="navbar-nav ms-auto d-none d-md-flex">
+      <span class="text-muted small fw-medium">Professional Downloader UI</span>
     </div>
   </div>
 </nav>
@@ -966,34 +925,4 @@
   </div>
 </main><!-- /.container -->
 
-<footer class="footer navbar-dark bg-dark py-3 mt-5">
-  <div class="container text-center">
-    @if (ytDlpVersion && metubeVersion) {
-      <div class="footer-content">
-        <div class="version-item">
-          <span class="version-label">yt-dlp</span>
-          <span class="version-value">{{ytDlpVersion}}</span>
-        </div>
-        <div class="version-separator"></div>
-        <div class="version-item">
-          <span class="version-label">MeTube</span>
-          <span class="version-value">{{metubeVersion}}</span>
-        </div>
-        <div class="version-separator"></div>
-        @if (ytDlpOptionsUpdateTime) {
-          <div class="version-item">
-            <span class="version-label">yt-dlp-options</span>
-            <span class="version-value">{{ytDlpOptionsUpdateTime}}</span>
-          </div>
-        }
-        @if (ytDlpOptionsUpdateTime) {
-          <div class="version-separator"></div>
-        }
-        <a href="https://github.com/alexta69/metube" target="_blank" class="github-link">
-          <fa-icon [icon]="faGithub" />
-          <span>GitHub</span>
-        </a>
-      </div>
-    }
-  </div>
-</footer>
+
