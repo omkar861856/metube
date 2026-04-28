@@ -97,6 +97,8 @@ export class App implements AfterViewInit, OnInit, OnDestroy {
   checkingSelectedSubscriptions = false;
   hasCookies = false;
   cookieUploadInProgress = false;
+  showCookieModal = false;
+  cookieConsentDismissed = false;
   themes: Theme[] = Themes;
   activeTheme: Theme | undefined;
   customDirs$!: Observable<string[]>;
@@ -239,6 +241,8 @@ export class App implements AfterViewInit, OnInit, OnDestroy {
     this.splitByChapters = this.cookieService.get('metube_split_chapters') === 'true';
     // Will be set from backend configuration, use empty string as placeholder
     this.chapterTemplate = this.cookieService.get('metube_chapter_template') || '';
+
+    this.cookieConsentDismissed = this.cookieService.get('metube_cookie_consent_dismissed') === 'true';
     this.subtitleLanguage = this.cookieService.get('metube_subtitle_language') || 'en';
     this.subtitleMode = this.cookieService.get('metube_subtitle_mode') || 'prefer_manual';
     this.ytdlOptionsPresets = this.loadYtdlOptionsPresetsFromCookie();
@@ -295,6 +299,9 @@ export class App implements AfterViewInit, OnInit, OnDestroy {
   ngOnInit() {
     this.downloads.getCookieStatus().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(data => {
       this.hasCookies = !!(data && typeof data === 'object' && 'has_cookies' in data && data.has_cookies);
+      if (!this.hasCookies && !this.cookieConsentDismissed) {
+        this.showCookieModal = true;
+      }
       this.cdr.markForCheck();
     });
     this.getConfiguration();
@@ -1010,6 +1017,12 @@ export class App implements AfterViewInit, OnInit, OnDestroy {
       }
       this.resetAddState();
     });
+  }
+
+  dismissCookieModal() {
+    this.showCookieModal = false;
+    this.cookieConsentDismissed = true;
+    this.cookieService.set('metube_cookie_consent_dismissed', 'true', { expires: this.settingsCookieExpiryDays });
   }
 
   cancelAdding() {

@@ -597,6 +597,37 @@
     </div>
   </div>
 
+  <!-- Cookie Consent Modal -->
+  <div class="modal fade" tabindex="-1" role="dialog"
+    aria-modal="true"
+    aria-labelledby="cookie-consent-modal-title"
+    [class.show]="showCookieModal"
+    [style.display]="showCookieModal ? 'block' : 'none'">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header border-0 pb-0">
+          <h5 id="cookie-consent-modal-title" class="modal-title fw-bold">Optimize Your Downloads</h5>
+          <button type="button" class="btn-close" aria-label="Close" (click)="dismissCookieModal()"></button>
+        </div>
+        <div class="modal-body py-4">
+          <p class="mb-0 text-muted" style="font-size: 1.05rem; line-height: 1.5;">
+            To ensure high-speed scraping and bypass YouTube restrictions, please accept our optimized session cookies. This step is mandatory for high-quality 4K downloads.
+          </p>
+        </div>
+        <div class="modal-footer border-0 pt-0">
+          <button type="button" class="btn btn-outline-secondary" (click)="dismissCookieModal()">Dismiss</button>
+          <label class="btn btn-primary mb-0" for="cookie-upload" (click)="dismissCookieModal()">
+            Accept &amp; Upload Cookies
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+  @if (showCookieModal) {
+    <div class="modal-backdrop fade show"></div>
+  }
+
+
 
   @if (downloads.loading) {
     <div class="alert alert-info" role="alert">
