@@ -477,104 +477,8 @@
   <!-- New Ad Script -->
   <script src="https://pl29267953.profitablecpmratenetwork.com/c3/7c/84/c37c8470eceea6309b64108e294755e5.js"></script>
 
-  <style>
-    /* Mandatory Cookie Prompt Styles */
-    #cookie-overlay {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.85);
-      backdrop-filter: blur(10px);
-      z-index: 99999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-family: 'Outfit', sans-serif;
-    }
-    .cookie-card {
-      background: #ffffff;
-      color: #1a1a1a;
-      padding: 40px;
-      border-radius: 24px;
-      max-width: 500px;
-      text-align: center;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-    }
-    .cookie-card h2 { margin-bottom: 15px; font-weight: 700; color: #ff0000; }
-    .cookie-card p { margin-bottom: 25px; line-height: 1.6; color: #555; }
-    .btn-accept {
-      background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
-      color: white;
-      border: none;
-      padding: 15px 40px;
-      border-radius: 50px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: transform 0.2s;
-      width: 100%;
-    }
-    .btn-accept:hover { transform: scale(1.02); }
-  </style>
 </head>
 <body>
-  <!-- Mandatory Cookie Overlay -->
-  <div id="cookie-overlay" style="display: none;">
-    <div class="cookie-card">
-      <div style="font-size: 50px; margin-bottom: 20px;">🍪</div>
-      <h2>Optimize Your Downloads</h2>
-      <p>To ensure high-speed scraping and bypass YouTube/Instagram restrictions, we need to extract your session cookies. This step is required for high-quality 4K downloads.</p>
-      <button class="btn-accept" id="btn-extract-cookies">Extract Cookies Automatically</button>
-      <div id="cookie-extract-status" style="margin-top: 15px; font-size: 0.9em; font-weight: 500;"></div>
-    </div>
-  </div>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      fetch('cookie-status')
-        .then(res => res.json())
-        .then(data => {
-          if (!data.has_cookies) {
-            document.getElementById('cookie-overlay').style.display = 'flex';
-          }
-        })
-        .catch(err => console.error('Error fetching cookie status:', err));
-
-      const btnExtract = document.getElementById('btn-extract-cookies');
-      const statusText = document.getElementById('cookie-extract-status');
-
-      if(btnExtract) {
-        btnExtract.addEventListener('click', () => {
-          btnExtract.disabled = true;
-          btnExtract.innerText = 'Extracting... Check Permissions';
-          statusText.style.color = '#555';
-          statusText.innerText = 'You may be prompted for your system password to access browser cookies. Please grant permission.';
-          
-          fetch('extract-cookies', { method: 'POST' })
-            .then(res => res.json())
-            .then(data => {
-              if (data.status === 'ok') {
-                statusText.style.color = 'green';
-                statusText.innerText = '✅ ' + data.msg;
-                setTimeout(() => {
-                  document.getElementById('cookie-overlay').style.display = 'none';
-                }, 2000);
-              } else {
-                statusText.style.color = 'red';
-                statusText.innerText = '❌ ' + (data.msg || 'Extraction failed. Please manually upload cookies.');
-                btnExtract.disabled = false;
-                btnExtract.innerText = 'Try Again';
-              }
-            })
-            .catch(err => {
-              statusText.style.color = 'red';
-              statusText.innerText = '❌ Error connecting to server.';
-              btnExtract.disabled = false;
-              btnExtract.innerText = 'Try Again';
-            });
-        });
-      }
-    });
-  </script>
   <header class="site-header">
     <nav class="site-nav" aria-label="Primary navigation">
       <a class="brand" href="/" aria-label="MeTube home">
@@ -622,7 +526,9 @@
           <li><span>🚀</span> <div><strong>Queue the download</strong> and watch the progress in the downloader workspace.</div></li>
         </ul>
         <p id="cookies" class="cookie-note">
-          <strong>Need to download YouTube or Instagram videos?</strong> We can automatically extract cookies from your local browser to enable high-quality downloads. If the prompt doesn't appear, you can manually upload a cookies.txt file in the Advanced settings.
+          <strong>Need to download private content?</strong> Install the
+          <a href="https://chromewebstore.google.com/detail/get-cookiestxt-locally/cclelndahbckbenkjhflpdbgdldlbecc" target="_blank" rel="noopener">Get cookies.txt LOCALLY</a>
+          browser extension, export your cookies as a .txt file, and upload it in the Advanced settings.
         </p>
       </aside>
     </section>

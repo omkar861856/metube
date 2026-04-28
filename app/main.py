@@ -14,7 +14,6 @@ import logging
 import json
 import pathlib
 import re
-import time
 from watchfiles import DefaultFilter, Change, awatch
 
 from ytdl import DownloadQueueNotifier, DownloadQueue, Download
@@ -766,56 +765,6 @@ async def delete_cookies(request):
     log.info('Cookies file deleted')
     return web.Response(text=serializer.encode({'status': 'ok'}))
 
-@routes.post(config.URL_PREFIX + 'extract-cookies')
-async def extract_cookies(request):
-    import subprocess
-    browsers = ["chrome", "firefox", "safari", "edge", "opera", "brave"]
-    for browser in browsers:
-        try:
-            def run_yt_dlp(b):
-                return subprocess.run(
-                    [sys.executable, "-m", "yt_dlp", "--cookies-from-browser", b, "--cookies", COOKIES_PATH, "https://www.youtube.com", "--skip-download"],
-                    capture_output=True, text=True
-                )
-            await asyncio.to_thread(run_yt_dlp, browser)
-            if os.path.exists(COOKIES_PATH):
-                with open(COOKIES_PATH, "r", encoding="utf-8") as f:
-                    content = f.read()
-                    if "# Netscape HTTP Cookie File" in content and "youtube.com" in content:
-                        config.set_runtime_override('cookiefile', COOKIES_PATH)
-                        log.info(f"Successfully extracted cookies from {browser}")
-                        return web.Response(text=serializer.encode({'status': 'ok', 'msg': f'Cookies extracted from {browser}'}))
-        except Exception as e:
-            log.error(f"Error extracting cookies from {browser}: {e}")
-    return web.Response(status=400, text=serializer.encode({'status': 'error', 'msg': 'Failed to extract cookies. Ensure you are logged into YouTube in a supported browser.'}))
-
-async def cookie_expiration_loop():
-    while True:
-        try:
-            if os.path.exists(COOKIES_PATH):
-                age = time.time() - os.path.getmtime(COOKIES_PATH)
-                if age > 12 * 3600:
-                    os.remove(COOKIES_PATH)
-                    config.remove_runtime_override('cookiefile')
-                    success, msg = config.load_ytdl_options()
-                    log.info("Deleted expired cookies.txt (older than 12 hours)")
-        except Exception as e:
-            log.error(f"Error checking cookie expiration: {e}")
-        await asyncio.sleep(60 * 10)  # check every 10 mins
-
-async def start_cookie_expiration_loop(app):
-    asyncio.create_task(cookie_expiration_loop())
-
-app.on_startup.append(start_cookie_expiration_loop)
-
-@routes.get(config.URL_PREFIX + 'cookie-status')
-async def cookie_status(request):
-    configured_cookiefile = config.YTDL_OPTIONS.get('cookiefile')
-    has_configured_cookies = isinstance(configured_cookiefile, str) and os.path.exists(configured_cookiefile)
-    has_uploaded_cookies = os.path.exists(COOKIES_PATH)
-    exists = has_uploaded_cookies or has_configured_cookies
-    return web.Response(text=serializer.encode({'status': 'ok', 'has_cookies': exists}))
-
 @routes.get(config.URL_PREFIX + 'history')
 async def history(request):
     history = { 'done': [], 'queue': [], 'pending': []}
@@ -960,7 +909,6 @@ app.router.add_route('OPTIONS', config.URL_PREFIX + 'subscriptions/delete', add_
 app.router.add_route('OPTIONS', config.URL_PREFIX + 'subscriptions/check', add_cors)
 app.router.add_route('OPTIONS', config.URL_PREFIX + 'upload-cookies', add_cors)
 app.router.add_route('OPTIONS', config.URL_PREFIX + 'delete-cookies', add_cors)
-app.router.add_route('OPTIONS', config.URL_PREFIX + 'extract-cookies', add_cors)
 
 async def on_prepare(request, response):
     origin = request.headers.get('Origin')
