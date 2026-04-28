@@ -616,7 +616,7 @@
         </div>
         <div class="modal-footer border-0 pt-0">
           <button type="button" class="btn btn-outline-secondary" (click)="dismissCookieModal()">Dismiss</button>
-          <label class="btn btn-primary mb-0" for="cookie-upload" (click)="dismissCookieModal()">
+          <label class="btn btn-primary mb-0" for="cookie-upload" tabindex="0" (click)="dismissCookieModal()" (keydown.enter)="dismissCookieModal()">
             Accept &amp; Upload Cookies
           </label>
         </div>
