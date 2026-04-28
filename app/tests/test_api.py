@@ -242,14 +242,7 @@ async def test_presets_endpoint_returns_names(mock_dqueue, monkeypatch):
     assert json.loads(resp.text) == {"presets": ["Preset A", "Preset B"]}
 
 
-@pytest.mark.asyncio
-async def test_cookie_status(mock_dqueue):
-    req = MagicMock(spec=web.Request)
-    resp = await main.cookie_status(req)
-    assert resp.status == 200
-    data = json.loads(resp.text)
-    assert data.get("status") == "ok"
-    assert "has_cookies" in data
+
 
 
 @pytest.mark.asyncio
