@@ -727,8 +727,8 @@ export class App implements AfterViewInit, OnInit, OnDestroy {
     this.setTheme();
   }
 
-  setTheme() {
-    this.activeTheme = this.themes.find(t => t.id === 'light');
+  setTheme(theme?: Theme) {
+    this.activeTheme = theme || this.themes.find(t => t.id === 'light');
     document.documentElement.setAttribute('data-bs-theme', 'light');
   }
 
