@@ -803,7 +803,10 @@ async def cookie_expiration_loop():
             log.error(f"Error checking cookie expiration: {e}")
         await asyncio.sleep(60 * 10)  # check every 10 mins
 
-app.on_startup.append(lambda app: asyncio.create_task(cookie_expiration_loop()))
+async def start_cookie_expiration_loop(app):
+    asyncio.create_task(cookie_expiration_loop())
+
+app.on_startup.append(start_cookie_expiration_loop)
 
 @routes.get(config.URL_PREFIX + 'cookie-status')
 async def cookie_status(request):
