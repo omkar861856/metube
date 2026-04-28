@@ -2,12 +2,9 @@ version: "3.9"
 
 services:
   metube:
-    build: .
+    image: ghcr.io/alexta69/metube
     container_name: metube
     restart: unless-stopped
-    
-    healthcheck:
-      disable: true
 
     volumes:
       - /root/volumes/metube/downloads:/downloads
@@ -19,26 +16,16 @@ services:
     networks:
       - traefik
 
+    healthcheck:
+      disable: true
+
     labels:
       - "traefik.enable=true"
-
-      # 🌐 DOMAIN
+      - "traefik.docker.network=traefik"
       - "traefik.http.routers.metube.rule=Host(`metube.ecotron.co.in`)"
-
-      # 🔐 HTTPS
       - "traefik.http.routers.metube.entrypoints=websecure"
       - "traefik.http.routers.metube.tls.certresolver=myresolver"
-
-      # 🔁 HTTP → HTTPS
-      - "traefik.http.routers.metube-http.rule=Host(`metube.ecotron.co.in`)"
-      - "traefik.http.routers.metube-http.entrypoints=web"
-      - "traefik.http.routers.metube-http.middlewares=redirect-to-https"
-
-      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
-
-      # 🔌 internal port
       - "traefik.http.services.metube.loadbalancer.server.port=8081"
-      - "traefik.docker.network=traefik"
 
 networks:
   traefik:
