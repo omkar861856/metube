@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   metube:
-    image: ghcr.io/alexta69/metube
+    build: .
     container_name: metube
     restart: unless-stopped
 
