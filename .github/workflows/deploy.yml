@@ -3,28 +3,40 @@ name: Deploy to Server
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout (not really needed but good practice)
+      - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Deploy to VPS
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.SERVER_HOST || secrets.SERVER_IP || secrets.SSH_HOST }}
-          username: ${{ secrets.SERVER_USER || secrets.SSH_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY || secrets.SSH_PRIVATE_KEY || secrets.SSH_KEY }}
-          script: |
-            cd /root
-            echo "📥 Pulling latest code..."
-            git pull origin master
-            echo "🐳 Rebuilding containers..."
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+
+          # Add server to known_hosts (prevents host verification error)
+          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+
+      - name: Deploy via SSH
+        run: |
+          ssh -o StrictHostKeyChecking=yes ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+            set -e
+
+            # Go to project folder (must match repo name)
+            cd /root/${{ github.event.repository.name }}
+
+            # Pull latest code
+            git pull origin main
+
+            # Rebuild + restart container
+            docker compose down
             docker compose up -d --build
-            echo "🧹 Cleaning old images..."
+
+            # Cleanup old images (optional but good)
             docker image prune -f
-            echo "✅ Deploy done"
+          EOF

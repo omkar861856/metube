@@ -1,34 +1,41 @@
-version: "3"
+version: "3.9"
 
 services:
   metube:
-    image: ghcr.io/${GITHUB_USERNAME:-yourusername}/metube:latest
+    build: .
     container_name: metube
     restart: unless-stopped
 
     volumes:
-      - /root/volumes/service1/downloads:/downloads   # 🔥 persistent
+      - /root/volumes/metube/downloads:/downloads
 
     environment:
       - PUID=1000
       - PGID=1000
 
     networks:
-      - app-network
+      - traefik
 
     labels:
       - "traefik.enable=true"
 
-      # 🌐 Subdomain routing
+      # 🌐 DOMAIN
       - "traefik.http.routers.metube.rule=Host(`metube.ecotron.co.in`)"
 
-      # HTTPS
+      # 🔐 HTTPS
       - "traefik.http.routers.metube.entrypoints=websecure"
       - "traefik.http.routers.metube.tls.certresolver=myresolver"
 
-      # internal port (metube runs on 8081)
+      # 🔁 HTTP → HTTPS
+      - "traefik.http.routers.metube-http.rule=Host(`metube.ecotron.co.in`)"
+      - "traefik.http.routers.metube-http.entrypoints=web"
+      - "traefik.http.routers.metube-http.middlewares=redirect-to-https"
+
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+
+      # 🔌 internal port
       - "traefik.http.services.metube.loadbalancer.server.port=8081"
 
 networks:
-  app-network:
+  traefik:
     external: true

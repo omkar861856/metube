@@ -1,0 +1,166 @@
+METUBE DESIGN + CONTENT SHEET
+=============================
+
+Project
+-------
+MeTube is positioned as a clean browser-based media downloader UI powered by yt-dlp. The updated page supports video, audio, captions, thumbnails, playlists, channels, subscriptions, and cookies.txt workflows while keeping the core Angular app functionality intact.
+
+Design Direction
+----------------
+The page uses a strict light theme only. The main downloader area, cards, inputs, and app container are forced into a light Bootstrap-compatible style so the URL entry section does not switch to dark mode or mixed theme styling.
+
+The visual style is simple, practical, and utility-focused:
+- White surface cards on a soft light-gray background.
+- Red accent color for MeTube branding and important UI highlights.
+- Blue links for instructional resources.
+- Rounded corners limited to 8px for a clean app-like appearance.
+- Soft shadows used only for separation, not decoration.
+- No dark panels, black backgrounds, or mixed white-on-black sections.
+
+Layout Changes
+--------------
+The updated page is structured as:
+
+1. Header
+   - MeTube logo mark.
+   - Simple navigation links to Downloader, How to download, Cookies, and Supported sites.
+
+2. Hero Section
+   - Clear headline explaining that MeTube downloads videos, audio, captions, thumbnails, playlists, and channels.
+   - Short product description.
+   - Capability tags for fast scanning.
+
+3. How to Download Panel
+   - Step-by-step usage instructions.
+   - Assistive emojis added to make each step easier to scan:
+     - Copy URL
+     - Paste into MeTube
+     - Choose output options
+     - Use Advanced settings
+     - Queue the download
+
+4. Cookie Instructions
+   - Explains when cookies.txt is needed.
+   - Mentions protected, private, premium, age-gated, or logged-in platforms.
+   - Links users to the recommended browser extension by name, without embedding ad or tracking values.
+   - Instructs users to upload the exported .txt file in Advanced settings.
+
+5. Advertisement Areas
+   - Ad areas are placed outside the core downloader flow.
+   - The 4:1 widget is placed between the hero/instructions and the downloader area.
+   - The smaller iframe ad is placed inside a secondary content card, away from the primary URL input section.
+   - Empty ad containers are hidden after load if no iframe, image, or ad element appears.
+   - The ad implementation keeps all provided scripts in place, but this design sheet intentionally does not include direct ad URLs, keys, or publisher values.
+
+6. Downloader App Frame
+   - The Angular <app-root> remains intact.
+   - The app area is wrapped in a light theme container.
+   - Dark Bootstrap classes and dark theme attributes are overridden to keep the downloader section light.
+   - Theme localStorage values are set to light by the inline script.
+   - A mutation observer prevents theme toggles from switching the page back to dark mode.
+
+7. Information Cards
+   - Best results card explains practical download tips.
+   - Subscriptions card explains channel and playlist monitoring.
+   - Supported websites card provides broad yt-dlp support coverage.
+
+SEO Content Changes
+-------------------
+The page now includes SEO-focused metadata:
+
+- Expanded title tag targeting video, audio, playlist, and channel downloader searches.
+- Meta description explaining MeTube as a browser-based yt-dlp downloader.
+- Meta keywords covering MeTube, yt-dlp, video downloader, audio downloader, YouTube downloader, playlist downloader, channel downloader, captions, thumbnails, cookies.txt, and supported sites.
+- Robots meta tag set to index and follow.
+- Open Graph title and description for social sharing.
+- Twitter card title and description.
+- JSON-LD WebApplication schema describing MeTube as a multimedia web application.
+
+SEO Body Content
+----------------
+The visible page content was expanded to include natural keyword coverage for:
+
+- Video downloads
+- Audio downloads
+- Caption downloads
+- Thumbnail downloads
+- Playlist downloads
+- Channel downloads
+- Subscription queues
+- yt-dlp supported websites
+- cookies.txt upload workflow
+- Advanced settings
+- Protected or logged-in platform downloads
+
+Supported Sites Strategy
+------------------------
+The full yt-dlp supported extractor list is too large to show as a long raw wall of text in the main view, so the page uses a more readable structure:
+
+1. Popular Supported Platforms
+   Shown immediately as tags, including YouTube, Vimeo, SoundCloud, Twitch, TikTok, Instagram, Facebook, Twitter/X, Dailymotion, Bandcamp, Reddit, Archive.org, BBC, TED, PeerTube, Rumble, Kick, LinkedIn Learning, Udemy, Pluralsight, Google Drive, Dropbox, and Generic extractor.
+
+2. Extended Supported Extractor List
+   A collapsible details section contains a compact broad list of major yt-dlp extractor families and representative supported services. This provides SEO coverage without overwhelming users on first view.
+
+3. 18+ Supported Extractors
+   Adult extractors are placed in a separate visible collapsible section. This keeps the page clean for general users while allowing users specifically looking for those extractors to find them.
+
+18+ Content Handling
+--------------------
+The adult extractor section is not hidden from users or search engines in a deceptive way. It is placed in a small collapsible section with a clear 18+ label and a responsible-use note.
+
+This approach is better than hiding adult keywords in invisible text because:
+- It avoids spammy SEO behavior.
+- It keeps the page trustworthy.
+- It lets interested users find the section.
+- It keeps the main UI clean for everyone else.
+
+UX Improvements
+----------------
+Key UX improvements include:
+
+- Clear top-level navigation.
+- Cleaner first screen with only essential messaging.
+- Download instructions near the top of the page.
+- Cookie workflow explained before users hit protected platform errors.
+- Light theme consistency across the main app section.
+- Empty ad boxes automatically hidden if the ad network does not render.
+- Supported sites organized into tags and collapsible sections.
+- The main downloader remains the central focus of the page.
+
+Technical Notes
+---------------
+The existing Angular functionality is preserved by keeping:
+
+- <app-root>
+- Existing stylesheet reference
+- Existing polyfills module script
+- Existing main module script
+- Existing manifest and icon references
+
+The HTML wrapper adds only layout, SEO, instructions, ad placement containers, and light-theme enforcement around the existing app.
+
+Ad Link Privacy Note
+--------------------
+This document intentionally avoids listing exact ad URLs, publisher IDs, ad keys, or script values. The production HTML can contain them, but design and content documentation should refer to them generically as:
+
+- Header ad script
+- Pre-head-close ad script
+- 4:1 widget placement
+- Small iframe ad placement
+- Closing-body ad script
+- Sponsored navigation/content link
+
+Recommended Final Page Goals
+----------------------------
+The final page should feel:
+
+- Light
+- Clean
+- Trustworthy
+- Utility-focused
+- Easy to scan
+- SEO-friendly without looking spammy
+- Clear about cookies.txt usage
+- Clear about broad yt-dlp platform support
+- Respectful about 18+ extractor categorization

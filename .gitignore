@@ -52,3 +52,10 @@ pending*
 
 __pycache__
 .venv
+
+# Downloaded media
+*.webm
+*.mp4
+*.mkv
+*.mp3
+*.m4a
