@@ -13,26 +13,18 @@ jobs:
       - name: Checkout (not really needed but good practice)
         uses: actions/checkout@v4
 
-      - name: Setup SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
-
-      - name: Deploy
-        run: |
-          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SERVER_HOST || secrets.SERVER_IP || secrets.SSH_HOST }}
+          username: ${{ secrets.SERVER_USER || secrets.SSH_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY || secrets.SSH_PRIVATE_KEY || secrets.SSH_KEY }}
+          script: |
             cd /root
-
             echo "📥 Pulling latest code..."
             git pull origin master
-
             echo "🐳 Rebuilding containers..."
             docker compose up -d --build
-
             echo "🧹 Cleaning old images..."
             docker image prune -f
-
             echo "✅ Deploy done"
-          EOF
