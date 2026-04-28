@@ -1,4 +1,4 @@
-name: Remote Auto-Deploy
+name: Deploy to Server
 
 on:
   push:
@@ -8,14 +8,31 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Deploy to VPS
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            cd ~/metube
-            chmod +x deploy.sh
-            ./deploy.sh
+      - name: Checkout (not really needed but good practice)
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy
+        run: |
+          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
+            cd /root
+
+            echo "📥 Pulling latest code..."
+            git pull origin master
+
+            echo "🐳 Rebuilding containers..."
+            docker compose up -d --build
+
+            echo "🧹 Cleaning old images..."
+            docker image prune -f
+
+            echo "✅ Deploy done"
+          EOF

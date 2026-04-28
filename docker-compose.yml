@@ -1,28 +1,34 @@
+version: "3"
+
 services:
   metube:
     image: ghcr.io/${GITHUB_USERNAME:-yourusername}/metube:latest
     container_name: metube
     restart: unless-stopped
+
     volumes:
-      - ./downloads:/downloads
+      - /root/volumes/service1/downloads:/downloads   # 🔥 persistent
+
     environment:
       - PUID=1000
       - PGID=1000
 
-  caddy:
-    image: caddy:latest
-    container_name: caddy-proxy
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile
-      - caddy_data:/data
-      - caddy_config:/config
-    depends_on:
-      - metube
+    networks:
+      - app-network
 
-volumes:
-  caddy_data:
-  caddy_config:
+    labels:
+      - "traefik.enable=true"
+
+      # 🌐 Subdomain routing
+      - "traefik.http.routers.metube.rule=Host(`metube.ecotron.co.in`)"
+
+      # HTTPS
+      - "traefik.http.routers.metube.entrypoints=websecure"
+      - "traefik.http.routers.metube.tls.certresolver=myresolver"
+
+      # internal port (metube runs on 8081)
+      - "traefik.http.services.metube.loadbalancer.server.port=8081"
+
+networks:
+  app-network:
+    external: true

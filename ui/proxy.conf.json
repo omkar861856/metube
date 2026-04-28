@@ -1,0 +1,39 @@
+{
+  "/socket.io": {
+    "target": "http://localhost:8081",
+    "ws": true
+  },
+  "/add": {
+    "target": "http://localhost:8081"
+  },
+  "/presets": {
+    "target": "http://localhost:8081"
+  },
+  "/subscriptions": {
+    "target": "http://localhost:8081"
+  },
+  "/delete": {
+    "target": "http://localhost:8081"
+  },
+  "/start": {
+    "target": "http://localhost:8081"
+  },
+  "/history": {
+    "target": "http://localhost:8081"
+  },
+  "/cookie-status": {
+    "target": "http://localhost:8081"
+  },
+  "/upload-cookies": {
+    "target": "http://localhost:8081"
+  },
+  "/delete-cookies": {
+    "target": "http://localhost:8081"
+  },
+  "/configuration": {
+    "target": "http://localhost:8081"
+  },
+  "/ytdl-options": {
+    "target": "http://localhost:8081"
+  }
+}
