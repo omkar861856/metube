@@ -5,6 +5,9 @@ services:
     build: .
     container_name: metube
     restart: unless-stopped
+    
+    healthcheck:
+      disable: true
 
     volumes:
       - /root/volumes/metube/downloads:/downloads
