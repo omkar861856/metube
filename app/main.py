@@ -55,7 +55,7 @@ class Config:
         'SUBSCRIPTION_SCAN_PLAYLIST_END': '50',
         'SUBSCRIPTION_MAX_SEEN_IDS': '50000',
         'CLEAR_COMPLETED_AFTER': '0',
-        'YTDL_OPTIONS': '{}',
+        'YTDL_OPTIONS': '{"socket_timeout": 60, "retries": 10, "fragment_retries": 10}',
         'YTDL_OPTIONS_FILE': '',
         'YTDL_OPTIONS_PRESETS': '{}',
         'YTDL_OPTIONS_PRESETS_FILE': '',
